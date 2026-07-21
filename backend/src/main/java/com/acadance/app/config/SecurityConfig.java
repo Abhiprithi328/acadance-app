@@ -50,11 +50,17 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // TODO: once your Vercel URL is live, replace "*" with that exact URL for tighter security
-        config.setAllowedOriginPatterns(List.of("*"));
+
+        // Explicit list of allowed frontends. Add/replace with your exact Vercel URL.
+        config.setAllowedOrigins(List.of(
+            "https://acadance-app.vercel.app",   // <-- replace with YOUR exact Vercel URL
+            "http://localhost:5173"              // local dev
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
+        // We use a Bearer token in the Authorization header, not cookies, so credentials aren't needed.
+        // Turning this off avoids a known conflict between wildcard origins and credentialed requests.
+        config.setAllowCredentials(false);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
